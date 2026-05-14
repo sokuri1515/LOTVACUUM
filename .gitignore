@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.pyc
+__pycache__/
+lot_raw.json
+samsung_raw.json
+skhynix_raw.json
+.DS_Store
