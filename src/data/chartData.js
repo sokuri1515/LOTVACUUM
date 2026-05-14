@@ -1,15 +1,11 @@
 /**
  * 데이터 출처
- * ✓ 확인 = DART 연결재무제표 실측값 (엑셀 "LOTVACUUM_10년_260514" 기반)
- * ~ 추정 = 연간 균등배분 또는 비율 추정
- *
- * 단위: LOT 매출 = 억원, Samsung/SK CAPEX = 억원
- * 한국 반도체장비 수입 (HS 8486.20): 백만USD
+ * ✓ = DART 연결재무제표 실측 (엑셀 LOTVACUUM_10년_260514)
+ * ~ = 추정
  */
 
 // ────────────────────────────────────────────────────────
-// LOT 개별 분기 매출 ✓ (억원) — DART 연결, rolling 4Q 역산
-// 2016Q1만 추정, 나머지 2016Q2~2025Q4 실측
+// LOT 개별 분기 매출 ✓ (억원)
 // ────────────────────────────────────────────────────────
 const LOT_Q_DATA = {
   "2016Q1": 230,  "2016Q2": 186,  "2016Q3": 290,  "2016Q4": 460,
@@ -25,36 +21,29 @@ const LOT_Q_DATA = {
 }
 
 // ────────────────────────────────────────────────────────
-// LOT 국내/해외 (억원)
-// ✓ 2023: DART 사업지역별 이미지 실측
-// ~ 나머지: 연도별 국내비율 추정 (2020=80%, 2021=54%, 2022=32%, 2024=36%, 2025=40%)
+// 국내/해외 Rolling 4Q ✓ (억원) — CSV 지역별 실측
+// 2021Q4 이후. 22Q3·23Q3는 인접분기 비율로 보간 (소스 데이터 오류)
+// 해외 = 중국 + 미국 + 기타
 // ────────────────────────────────────────────────────────
-const LOT_DOM_Q_DATA = {
-  "2015Q1": 100, "2015Q2": 96,  "2015Q3": 96,  "2015Q4": 92,
-  "2016Q1": 189, "2016Q2": 153, "2016Q3": 238, "2016Q4": 377,
-  "2017Q1": 312, "2017Q2": 504, "2017Q3": 359, "2017Q4": 331,
-  "2018Q1": 363, "2018Q2": 370, "2018Q3": 207, "2018Q4": 246,
-  "2019Q1": 272, "2019Q2": 236, "2019Q3": 266, "2019Q4": 354,
-  "2020Q1": 439, "2020Q2": 333, "2020Q3": 344, "2020Q4": 254,
-  "2021Q1": 393, "2021Q2": 420, "2021Q3": 277, "2021Q4": 312,
-  "2022Q1": 240, "2022Q2": 269, "2022Q3": 332, "2022Q4": 356,
-  "2023Q1": 300, "2023Q2": 316, "2023Q3": 354, "2023Q4": 304,
-  "2024Q1": 262, "2024Q2": 250, "2024Q3": 216, "2024Q4": 230,
-  "2025Q1": 223, "2025Q2": 252, "2025Q3": 234, "2025Q4": 270,
+const DOM_4Q = {
+  "2021Q4":1702, "2022Q1":1771, "2022Q2":1873,
+  "2022Q3":2045, // 보간: (1873/2683 + 2158/3742)/2 × 3206
+  "2022Q4":2158,
+  "2023Q1":2210, "2023Q2":2111,
+  "2023Q3":2121, // 보간: (2111/4471 + 1908/4730)/2 × 4843
+  "2023Q4":1908,
+  "2024Q1":1830, "2024Q2":1824, "2024Q3":1825, "2024Q4":1906,
+  "2025Q1":1899, "2025Q2":1962, "2025Q3":1986, "2025Q4":1997,
 }
-
-const LOT_OVS_Q_DATA = {
-  "2015Q1": 18,  "2015Q2": 17,  "2015Q3": 17,  "2015Q4": 16,
-  "2016Q1": 41,  "2016Q2": 33,  "2016Q3": 52,  "2016Q4": 83,
-  "2017Q1": 104, "2017Q2": 168, "2017Q3": 119, "2017Q4": 110,
-  "2018Q1": 155, "2018Q2": 158, "2018Q3": 89,  "2018Q4": 105,
-  "2019Q1": 90,  "2019Q2": 78,  "2019Q3": 88,  "2019Q4": 118,
-  "2020Q1": 110, "2020Q2": 83,  "2020Q3": 86,  "2020Q4": 63,
-  "2021Q1": 335, "2021Q2": 358, "2021Q3": 236, "2021Q4": 265,
-  "2022Q1": 511, "2022Q2": 573, "2022Q3": 704, "2022Q4": 757,
-  "2023Q1": 806, "2023Q2": 900, "2023Q3": 1054, "2023Q4": 696,
-  "2024Q1": 465, "2024Q2": 445, "2024Q3": 383,  "2024Q4": 409,
-  "2025Q1": 334, "2025Q2": 379, "2025Q3": 352,  "2025Q4": 405,
+const OVS_4Q = {
+  "2021Q4": 894, "2022Q1": 848, "2022Q2": 810,
+  "2022Q3":1161, // 3206 - 2045
+  "2022Q4":1584,
+  "2023Q1":1886, "2023Q2":2360,
+  "2023Q3":2722, // 4843 - 2121
+  "2023Q4":2823,
+  "2024Q1":2520, "2024Q2":2005, "2024Q3":1196, "2024Q4": 754,
+  "2025Q1": 589, "2025Q2": 461, "2025Q3": 426, "2025Q4": 452,
 }
 
 // ────────────────────────────────────────────────────────
@@ -67,9 +56,7 @@ const SKH_ANNUAL_EST = {
   2015: 43000, 2016: 45000, 2017: 80000, 2018: 127000,
   2019: 94000, 2020: 92000, 2021: 117000,
 }
-const SAM_ANNUAL_ACTUAL = {
-  2025: 475000,
-}
+const SAM_ANNUAL_ACTUAL = { 2025: 475000 }
 const SAM_ANNUAL_EST = {
   2015: 150000, 2016: 160000, 2017: 270000, 2018: 290000,
   2019: 240000, 2020: 320000, 2021: 430000, 2022: 470000,
@@ -77,7 +64,7 @@ const SAM_ANNUAL_EST = {
 }
 
 // ────────────────────────────────────────────────────────
-// 경쟁사 연매출 추정 (억원)
+// 경쟁사 추정 (억원)
 // ────────────────────────────────────────────────────────
 const EDWARDS_KR_EST = {
   2015: 800,  2016: 850,  2017: 1200, 2018: 1400, 2019: 1200,
@@ -104,7 +91,6 @@ const DRAM_SPOT = {
   "2024Q1":2.5,"2024Q2":3.2,"2024Q3":3.8,"2024Q4":3.5,
   "2025Q1":3.2,"2025Q2":3.0,"2025Q3":2.8,"2025Q4":2.9,
 }
-
 const SEMI_BB = {
   "2015Q1":0.98,"2015Q2":0.95,"2015Q3":0.92,"2015Q4":0.90,
   "2016Q1":0.88,"2016Q2":0.92,"2016Q3":0.98,"2016Q4":1.05,
@@ -118,7 +104,6 @@ const SEMI_BB = {
   "2024Q1":1.02,"2024Q2":1.08,"2024Q3":1.12,"2024Q4":1.10,
   "2025Q1":1.15,"2025Q2":1.12,"2025Q3":1.08,"2025Q4":1.10,
 }
-
 const KR_IMPORT = {
   "2015Q1":800, "2015Q2":850, "2015Q3":900, "2015Q4":750,
   "2016Q1":700, "2016Q2":750, "2016Q3":800, "2016Q4":1000,
@@ -132,7 +117,6 @@ const KR_IMPORT = {
   "2024Q1":1100,"2024Q2":1300,"2024Q3":1500,"2024Q4":1700,
   "2025Q1":1800,"2025Q2":1750,"2025Q3":1700,"2025Q4":1650,
 }
-
 const LAM_KOREA = {
   "2015Q1":350,"2015Q2":380,"2015Q3":360,"2015Q4":330,
   "2016Q1":310,"2016Q2":330,"2016Q3":380,"2016Q4":450,
@@ -148,22 +132,16 @@ const LAM_KOREA = {
 }
 
 // ────────────────────────────────────────────────────────
-// 시계열 조립 (2015Q1 ~ 2025Q4)
+// 시계열 조립
 // ────────────────────────────────────────────────────────
-function makeQLabel(y, q) {
-  return `'${String(y).slice(2)}Q${q}`
-}
+function makeQLabel(y, q) { return `'${String(y).slice(2)}Q${q}` }
 
 const LOT_2015_EST = { "2015Q1":118,"2015Q2":113,"2015Q3":113,"2015Q4":108 }
 
 function buildLotQuarterly() {
   const out = {}
-  for (const [k, v] of Object.entries(LOT_2015_EST)) {
-    out[k] = { value: v, est: true }
-  }
-  for (const [k, v] of Object.entries(LOT_Q_DATA)) {
-    out[k] = { value: v, est: k === '2016Q1' }
-  }
+  for (const [k, v] of Object.entries(LOT_2015_EST)) out[k] = { value: v, est: true }
+  for (const [k, v] of Object.entries(LOT_Q_DATA)) out[k] = { value: v, est: k === '2016Q1' }
   return out
 }
 
@@ -171,8 +149,7 @@ function buildCapexQuarterly(annualMap, actualMap) {
   const out = {}
   const merged = { ...annualMap, ...actualMap }
   for (const [yr, total] of Object.entries(merged)) {
-    const y = Number(yr)
-    const q = Math.round(total / 4)
+    const y = Number(yr), q = Math.round(total / 4)
     for (let qi = 1; qi <= 4; qi++) {
       out[`${y}Q${qi}`] = { value: qi < 4 ? q : total - q * 3, est: !(actualMap[yr]) }
     }
@@ -183,8 +160,7 @@ function buildCapexQuarterly(annualMap, actualMap) {
 function buildCompQuarterly(annualMap) {
   const out = {}
   for (const [yr, total] of Object.entries(annualMap)) {
-    const y = Number(yr)
-    const q = Math.round(total / 4)
+    const y = Number(yr), q = Math.round(total / 4)
     for (let qi = 1; qi <= 4; qi++) {
       out[`${y}Q${qi}`] = { value: qi < 4 ? q : total - q * 3, est: true }
     }
@@ -198,14 +174,12 @@ function rollingSum(quarterly, keys, windowSize = 4) {
   for (let i = 0; i < keys.length; i++) {
     if (i < windowSize - 1) { result[keys[i]] = null; continue }
     const window = keys.slice(i - windowSize + 1, i + 1).map(k => quarterly[k]?.value)
-    result[keys[i]] = window.every(v => v !== null && v !== undefined) ? window.reduce((a, b) => a + b, 0) : null
+    result[keys[i]] = window.every(v => v !== null && v !== undefined)
+      ? window.reduce((a, b) => a + b, 0) : null
   }
   return result
 }
 
-// ────────────────────────────────────────────────────────
-// 최종 배열 생성
-// ────────────────────────────────────────────────────────
 const lotQ     = buildLotQuarterly()
 const skhQ     = buildCapexQuarterly(SKH_ANNUAL_EST, SKH_ANNUAL_ACTUAL)
 const samQ     = buildCapexQuarterly(SAM_ANNUAL_EST, SAM_ANNUAL_ACTUAL)
@@ -225,23 +199,18 @@ const krQ = {}
 ALL_KEYS.forEach(k => { krQ[k] = { value: KR_IMPORT[k] ?? null, est: true } })
 const kr4q = rollingSum(krQ, ALL_KEYS)
 
-const domQ2 = {}
-const ovsQ2 = {}
-ALL_KEYS.forEach(k => {
-  domQ2[k] = { value: LOT_DOM_Q_DATA[k] ?? null }
-  ovsQ2[k] = { value: LOT_OVS_Q_DATA[k] ?? null }
-})
-const dom4q = rollingSum(domQ2, ALL_KEYS)
-const ovs4q = rollingSum(ovsQ2, ALL_KEYS)
-
 export const chartData = ALL_KEYS.map(key => {
   const [yr, qi] = [parseInt(key.slice(0, 4)), parseInt(key.slice(5))]
+  const hasBreakdown = DOM_4Q[key] != null
   return {
     quarter:      key,
     label:        makeQLabel(yr, qi),
     lot_q:        lotQ[key]?.value ?? null,
     lot_q_est:    lotQ[key]?.est ?? true,
     lot_4q:       lot4q[key],
+    lot_pre_4q:   hasBreakdown ? null : (lot4q[key] ?? null),
+    lot_dom_4q:   DOM_4Q[key] ?? null,
+    lot_ovs_4q:   OVS_4Q[key] ?? null,
     sam_q:        samQ[key]?.value ?? null,
     sam_q_est:    samQ[key]?.est ?? true,
     sam_4q:       sam4q[key],
@@ -252,10 +221,6 @@ export const chartData = ALL_KEYS.map(key => {
     semi_bb:      SEMI_BB[key] ?? null,
     kr_import:    KR_IMPORT[key] ?? null,
     kr_import_4q: kr4q[key],
-    lot_dom_q:    LOT_DOM_Q_DATA[key] ?? null,
-    lot_ovs_q:    LOT_OVS_Q_DATA[key] ?? null,
-    lot_dom_4q:   dom4q[key],
-    lot_ovs_4q:   ovs4q[key],
     lam_korea:    LAM_KOREA[key] ?? null,
     edwards:      edwardsQ[key]?.value ?? null,
     ebara:        ebaraQ[key]?.value ?? null,
@@ -263,9 +228,9 @@ export const chartData = ALL_KEYS.map(key => {
 })
 
 export const DATA_META = {
-  lot_confirmed_quarters: Object.keys(LOT_Q_DATA).filter(k => k !== '2016Q1'),
   lot_confirmed_annual:   [2017,2018,2019,2020,2021,2022,2023,2024,2025],
+  lot_breakdown_from:     '2021Q4',
   skh_confirmed_annual:   Object.keys(SKH_ANNUAL_ACTUAL).map(Number),
   sam_confirmed_annual:   Object.keys(SAM_ANNUAL_ACTUAL).map(Number),
-  source_note: "DART 연결재무제표 rolling 4Q 역산 (엑셀 LOTVACUUM_10년_260514). 2016Q1·2015만 추정.",
+  source_note: "DART 연결재무제표 (엑셀 LOTVACUUM_10년_260514). 국내/해외 2021Q4~ CSV 실측.",
 }
