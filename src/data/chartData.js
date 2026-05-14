@@ -243,6 +243,11 @@ const lot4q = rollingSum(lotQ, ALL_KEYS)
 const skh4q = rollingSum(skhQ, ALL_KEYS)
 const sam4q = rollingSum(samQ, ALL_KEYS)
 
+// 한국 반도체장비 수입 rolling (단위: 백만USD)
+const krQ = {}
+ALL_KEYS.forEach(k => { krQ[k] = { value: KR_IMPORT[k] ?? null, est: true } })
+const kr4q = rollingSum(krQ, ALL_KEYS)
+
 export const chartData = ALL_KEYS.map(key => {
   const [yr, qi] = [parseInt(key.slice(0, 4)), parseInt(key.slice(5))]
   return {
@@ -264,6 +269,7 @@ export const chartData = ALL_KEYS.map(key => {
     dram_spot: DRAM_SPOT[key] ?? null,
     semi_bb: SEMI_BB[key] ?? null,
     kr_import: KR_IMPORT[key] ?? null,
+    kr_import_4q: kr4q[key],
     lam_korea: LAM_KOREA[key] ?? null,
     // 경쟁사
     edwards: edwardsQ[key]?.value ?? null,
