@@ -31,6 +31,39 @@ const LOT_H1_ACTUAL = {
   2024: 1421,
 }
 
+// ────────────────────────────────────────────────────────
+// LOT 국내/해외 분기별 매출 (사업지역별 이미지 기반)
+// ✓ 연간합계: 2020-2024 실측  ✓ 2023분기합계: 실측
+// ✓ 2024: H1=1,421억·FY=1,775억 확인  ~ 지역비율: 이미지 추정
+// 연도별 국내비율: 2020=80% 2021=54% 2022=32% 2023=27% 2024=36%
+// ────────────────────────────────────────────────────────
+const LOT_DOM_Q_DATA = {
+  "2015Q1":95, "2015Q2":95, "2015Q3":95, "2015Q4":95,
+  "2016Q1":105,"2016Q2":105,"2016Q3":105,"2016Q4":105,
+  "2017Q1":163,"2017Q2":163,"2017Q3":162,"2017Q4":162,
+  "2018Q1":220,"2018Q2":220,"2018Q3":220,"2018Q4":220,
+  "2019Q1":188,"2019Q2":188,"2019Q3":187,"2019Q4":187,
+  "2020Q1":363,"2020Q2":363,"2020Q3":362,"2020Q4":362,
+  "2021Q1":350,"2021Q2":350,"2021Q3":350,"2021Q4":350,
+  "2022Q1":300,"2022Q2":300,"2022Q3":300,"2022Q4":300,
+  "2023Q1":300,"2023Q2":316,"2023Q3":354,"2023Q4":304,
+  "2024Q1":197,"2024Q2":200,"2024Q3":130,"2024Q4":110,
+  "2025Q1":130,"2025Q2":null,"2025Q3":null,"2025Q4":null,
+}
+const LOT_OVS_Q_DATA = {
+  "2015Q1":18, "2015Q2":18, "2015Q3":17, "2015Q4":17,
+  "2016Q1":23, "2016Q2":23, "2016Q3":22, "2016Q4":22,
+  "2017Q1":33, "2017Q2":33, "2017Q3":32, "2017Q4":32,
+  "2018Q1":55, "2018Q2":55, "2018Q3":55, "2018Q4":55,
+  "2019Q1":35, "2019Q2":35, "2019Q3":35, "2019Q4":35,
+  "2020Q1":91, "2020Q2":91, "2020Q3":90, "2020Q4":90,
+  "2021Q1":299,"2021Q2":299,"2021Q3":299,"2021Q4":298,
+  "2022Q1":636,"2022Q2":636,"2022Q3":635,"2022Q4":635,
+  "2023Q1":806,"2023Q2":900,"2023Q3":1054,"2023Q4":696,
+  "2024Q1":513,"2024Q2":511,"2024Q3":70, "2024Q4":44,
+  "2025Q1":413,"2025Q2":null,"2025Q3":null,"2025Q4":null,
+}
+
 // SK하이닉스 CAPEX 연간 확인치 (억원)
 const SKH_ANNUAL_ACTUAL = {
   2022: 196000, 2023: 65000, 2024: 179000, 2025: 302000,
@@ -248,6 +281,16 @@ const krQ = {}
 ALL_KEYS.forEach(k => { krQ[k] = { value: KR_IMPORT[k] ?? null, est: true } })
 const kr4q = rollingSum(krQ, ALL_KEYS)
 
+// LOT 국내/해외 rolling 4Q
+const domQ2 = {}
+const ovsQ2 = {}
+ALL_KEYS.forEach(k => {
+  domQ2[k] = { value: LOT_DOM_Q_DATA[k] ?? null }
+  ovsQ2[k] = { value: LOT_OVS_Q_DATA[k] ?? null }
+})
+const dom4q = rollingSum(domQ2, ALL_KEYS)
+const ovs4q = rollingSum(ovsQ2, ALL_KEYS)
+
 export const chartData = ALL_KEYS.map(key => {
   const [yr, qi] = [parseInt(key.slice(0, 4)), parseInt(key.slice(5))]
   return {
@@ -270,6 +313,10 @@ export const chartData = ALL_KEYS.map(key => {
     semi_bb: SEMI_BB[key] ?? null,
     kr_import: KR_IMPORT[key] ?? null,
     kr_import_4q: kr4q[key],
+    lot_dom_q:  LOT_DOM_Q_DATA[key] ?? null,
+    lot_ovs_q:  LOT_OVS_Q_DATA[key] ?? null,
+    lot_dom_4q: dom4q[key],
+    lot_ovs_4q: ovs4q[key],
     lam_korea: LAM_KOREA[key] ?? null,
     // 경쟁사
     edwards: edwardsQ[key]?.value ?? null,
