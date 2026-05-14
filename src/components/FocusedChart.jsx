@@ -83,9 +83,10 @@ const SERIES = [
 ]
 
 const BADGES = [
-  ['LOT 연매출 2020-24 ✓', true], ['LOT 2023 분기합계 ✓', true],
-  ['LOT 2024 H1=1421억 ✓', true], ['SK CAPEX 2022-25 ✓', true],
-  ['삼성DS 2025 ✓', true], ['국내/해외 비율 ~ 이미지 추정', false],
+  ['LOT 연결실적 17-25 ✓', true], ['LOT 2023 분기 ✓', true],
+  ['FY2024=2,660억 ✓', true], ['FY2025=2,449억 ✓', true],
+  ['SK CAPEX 2022-25 ✓', true], ['삼성DS 2025 ✓', true],
+  ['국내/해외 비율 ~ 추정', false],
 ]
 
 export default function FocusedChart() {
@@ -152,20 +153,21 @@ export default function FocusedChart() {
       <div style={{ marginTop: 12, padding: '12px 14px', background: '#161b22', border: '1px solid #30363d', borderRadius: 8 }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: '#e6edf3', marginBottom: 6 }}>해석 포인트</div>
         <div style={{ fontSize: 11, color: '#6e7681', lineHeight: 2.0 }}>
-          <div><span style={{ color: '#22c55e' }}>■ 국내</span> — 삼성/SK 한국 팹 CAPEX 연동. 연 1,200~1,450억 비교적 안정적</div>
-          <div><span style={{ color: '#0891b2' }}>■ 해외</span> — 중국 팹 투자 사이클이 핵심 드라이버. 2022 2,542억 → 2023 3,456억 → 2024 1,138억 급락</div>
-          <div><span style={{ color: '#60a5fa' }}>— 삼성DS CAPEX</span> 선행 → LOT 매출 2~4분기 후 반응</div>
-          <div><span style={{ color: '#fbbf24' }}>--- 장비수입</span> 급증 = 국내 팹 증설 동행 선행지표</div>
-          <div style={{ marginTop: 4, color: '#4d5566' }}>※ 2025 SK 30.2조 + 삼성DS 47.5조 집행 → 국내 회복 기대 / 해외는 중국 정책 불확실성 잔존</div>
+          <div><span style={{ color: '#22c55e' }}>■ 국내</span> — 삼성/SK 한국 팹 CAPEX 연동. 2023 고점 1,326억(4Q) → 2025 안정화 979억</div>
+          <div><span style={{ color: '#0891b2' }}>■ 해외</span> — 중국 팹 사이클이 핵심. 2023 고점 3,456억(FY) → 2024 1,702억 → 2025 1,470억 저점 탈출 시도</div>
+          <div><span style={{ color: '#60a5fa' }}>— 삼성DS CAPEX</span> 선행 → LOT 매출 2~4분기 후 반응. FY2023 최고 4,730억 → FY2024 2,660억 반토막</div>
+          <div><span style={{ color: '#fbbf24' }}>--- 장비수입</span> 급증 = 국내 팹 증설 동행 선행지표. 2025 회복세 관건</div>
+          <div style={{ marginTop: 4, color: '#4d5566' }}>※ FY2025=2,449억 저점 확인 추정 / 2025 SK 30.2조+삼성DS 47.5조 집행 → 2026 국내 회복 기대</div>
         </div>
       </div>
 
       <div style={{ marginTop: 8, padding: '8px 14px', background: '#0d1117', border: '1px solid #30363d', borderRadius: 6 }}>
         <div style={{ fontSize: 10, color: '#6e7681', lineHeight: 1.9 }}>
           <strong style={{ color: '#e6edf3' }}>데이터 주석</strong>
-          <div>✓ <strong>합계 실측</strong>: 연매출 2020~2024 DART / 2023 분기 / 2024 H1=1,421억·FY=1,775억</div>
-          <div>~ <strong>국내/해외 비율</strong>: 첨부 사업지역별 차트 이미지 시각 추정 (DART 사업보고서 원문 검증 권장)</div>
-          <div>~ <strong>2015~2022 분기·지역</strong>: 연간 균등배분 추정 / 삼성DS CAPEX·수입통계: 공시·추정 혼합</div>
+          <div>✓ <strong>LOT 연결 실측</strong>: DART 연결재무제표 rolling 4Q 역산 — FY2017~2025 실측 (2016Q1만 추정)</div>
+          <div>✓ <strong>주요 연간</strong>: FY2022=3,742억 / FY2023=4,730억 / FY2024=2,660억 / FY2025=2,449억</div>
+          <div>~ <strong>국내/해외 비율</strong>: 연도별 추정 (2023 분기는 DART 이미지 실측) — 원문 검증 권장</div>
+          <div>~ <strong>삼성DS CAPEX·장비수입</strong>: 공시·추정 혼합 / 2015 LOT 매출은 균등배분 추정</div>
         </div>
       </div>
 
